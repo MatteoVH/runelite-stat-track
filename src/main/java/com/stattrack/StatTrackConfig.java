@@ -9,20 +9,12 @@ public interface StatTrackConfig extends Config {
 	String GROUP = "stattrack";
 
 	@ConfigItem(
-			keyName = "mongodbUri",
-			name = "MongoDB URI",
-			description = "URL of the MongoDB instance to write to",
-			position = 0
-	)
-	String getMongodbUri();
-
-	@ConfigItem(
 			keyName = "writeXp",
-			name = "Submit Experience",
-			description = "Submit experience amount",
-			position = 5
+			name = "Log Experience Gains",
+			description = "Log experience gains",
+			position = 1
 	)
-	default boolean writeXp() {
+	default boolean logXp() {
 		return true;
 	}
 }

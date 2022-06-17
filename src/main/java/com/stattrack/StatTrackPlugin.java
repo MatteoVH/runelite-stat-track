@@ -6,6 +6,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Skill;
 import net.runelite.api.events.StatChanged;
+import net.runelite.client.account.AccountSession;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -57,6 +58,7 @@ public class StatTrackPlugin extends Plugin {
 	@Subscribe
 	public void onStatChanged(StatChanged statChanged) {
 		log.debug("stat changed %s", statChanged);
+		log.debug("current username %s", client.getLocalPlayer().getName());
 		if (statChanged.getXp() == 0 || client.getGameState() != GameState.LOGGED_IN)
 			return;
 		final Integer previous = previousStatXp.put(statChanged.getSkill(), statChanged.getXp());
@@ -64,21 +66,22 @@ public class StatTrackPlugin extends Plugin {
 			return;
 		previousStatXp.put(statChanged.getSkill(), statChanged.getXp());
 
-		if (config.writeXp()) {
+		if (config.logXp()) {
 			Skill skill = statChanged.getSkill();
 			long xp = skill == Skill.OVERALL ? client.getOverallExperience() : client.getSkillExperience(skill);
 			if (xp != 0) {
 				log.debug("about to write a test doc to MongoDB");
-				logXp(statChanged.getSkill(), statChanged.getLevel(), statChanged.getXp());
+				logXp(statChanged.getSkill(), statChanged.getLevel(), statChanged.getXp(), client.getLocalPlayer().getName());
 			}
 		}
 	}
 
-	public final void logXp(Skill skill, int level, int xp) {
+	public final void logXp(Skill skill, int level, int xp, String playerUsername) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("skill", skill.getName());
 		jsonObject.addProperty("level", level);
 		jsonObject.addProperty("xp", xp);
+		jsonObject.addProperty("username", playerUsername);
 
 		Gson gson = new Gson();
 		String stringifiedJson = gson.toJson(jsonObject);
