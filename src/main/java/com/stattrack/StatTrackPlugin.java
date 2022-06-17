@@ -45,12 +45,8 @@ public class StatTrackPlugin extends Plugin {
 
 	private final EnumMap<Skill, Integer> previousStatXp = new EnumMap<>(Skill.class);
 
-	private final OkHttpClient httpClient;
-
 	@Inject
-	public StatTrackPlugin() {
-		this.httpClient = new OkHttpClient();
-	}
+	private OkHttpClient httpClient;
 
 	public static final MediaType JSON
 			= MediaType.get("application/json; charset=utf-8");
