@@ -4,16 +4,25 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
-public interface StatTrackConfig extends Config
-{
+@ConfigGroup(StatTrackConfig.GROUP)
+public interface StatTrackConfig extends Config {
+	String GROUP = "stattrack";
+
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+			keyName = "mongodbUri",
+			name = "MongoDB URI",
+			description = "URL of the MongoDB instance to write to",
+			position = 0
 	)
-	default String greeting()
-	{
-		return "Hello";
+	String getMongodbUri();
+
+	@ConfigItem(
+			keyName = "writeXp",
+			name = "Submit Experience",
+			description = "Submit experience amount",
+			position = 5
+	)
+	default boolean writeXp() {
+		return true;
 	}
 }
