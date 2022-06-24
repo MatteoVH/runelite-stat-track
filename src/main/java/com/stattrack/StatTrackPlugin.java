@@ -88,12 +88,18 @@ public class StatTrackPlugin extends Plugin {
 		String url = "https://osrs-group-ironman-stats.vercel.app/api/logXp";
 		String localUrl = "http://localhost:3000/api/logXp";
 		Request request = new Request.Builder().url(url).post(body).build();
-		try {
-			Response response = httpClient.newCall(request).execute();
-			log.debug(response.toString());
-		} catch (IOException e) {
-			log.debug(e.toString());
-			throw new RuntimeException(e);
-		}
+
+		httpClient.newCall(request).enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				log.warn("Error submitting xp", e);
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				response.close();
+				log.debug("Submitted xp for {}", playerUsername);
+			}
+		});
 	}
 }
